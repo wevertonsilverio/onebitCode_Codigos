@@ -1,76 +1,69 @@
-function calcularAreaTriangulo(){
-    const base = prompt("informe a base do triangulo")
-    const altura = prompt("informe a altura do triangulo")
-    return base * altura /2
-}
-function calcularAreaRetangulo(){
-    const base = prompt("informe a base do retangulo")
-    const altura = prompt("informe a altura do retangulo")
-    return base * altura 
-}
-function calcularAreaQuadrado(){
-    const lado = prompt("informe a lado do quadrado")
-    return lado * lado
-}
-function calcularAreaTrapezio(){
-    const baseMaior = parseFloat(prompt("informe a base maior do trapezio"))
-    const baseMenor = parseFloat(prompt("informe a base menor do trapezio"))
-    const altura = parseFloat(prompt("informe a altura do trapezio"))
-    return (baseMaior+ baseMenor) * altura / 2
-}
-function calcularAreaCirculo(){
-    const raio = prompt("informe o raio do circulo")
-    return(3.14 * raio * raio)
-}
+const main = document.querySelector("main")
+const root = document.querySelector(":root")
+const input = document.getElementById("input")
+const resultInput = document.getElementById("result")
+const allowedKeys = ["(", ")", "/", "*", "-", "+", "9", "8", "7", "6", "5", "4", "3", "2", "1", "0", ".", "%", " "]
 
-function exibirMenu(){
-    return prompt(
-        "Calculadora Geométrica\n" +
-    "1. Calcular área de triângulo\n" +
-    "2. Calcular área de retângulo\n" +
-    "3. Calcular área de quadrado\n" +
-    "4. Calcular área de trapézio\n" +
-    "5. Calcular área de círculo\n" +
-    "6. Sair\n"
-    )
-    
-}
-function executar() {
-    let opcao = ""
-  
-    do {
-      opcao = exibirMenu()
-      let resultado
-  
-      switch (opcao) {
-        case "1":
-          resultado = calcularAreaTriangulo()
-          break
-        case "2":
-          resultado = calcularAreaRetangulo()
-          break
-        case "3":
-          resultado = calcularAreaQuadrado()
-          break
-        case "4":
-          resultado = calcularAreaTrapezio()
-          break
-        case "5":
-          resultado = calcularAreaCirculo()
-          break
-        case "6":
-          alert("Saindo...")
-          break
-        default:
-          alert("Opção inválida!")
-          break
-      }
-  
-      if (resultado) {
-        alert("Resultado: " + resultado)
-      }
-  
-    } while (opcao !== "6");
+document.querySelectorAll(".charKey").forEach(function (charKeyBtn) {
+  charKeyBtn.addEventListener("click", function () {
+    const value = charKeyBtn.dataset.value
+    input.value += value
+  })
+})
+
+document.getElementById("clear").addEventListener("click", function () {
+  input.value = ""
+  input.focus()
+})
+
+input.addEventListener("keydown", function (ev) {
+  ev.preventDefault()
+  if (allowedKeys.includes(ev.key)) {
+    input.value += ev.key
+    return
   }
+  if (ev.key === "Backspace") {
+    input.value = input.value.slice(0, -1)
+  }
+  if (ev.key === "Enter") {
+    calculate()
+  }
+})
 
-  executar()
+document.getElementById("equal").addEventListener("click", calculate)
+
+function calculate() {
+  resultInput.value = "ERROR"
+  resultInput.classList.add("error")
+  const result = eval(input.value)
+  resultInput.value = result
+  resultInput.classList.remove("error")
+}
+
+document.getElementById("copyToClipboard").addEventListener("click", function (ev) {
+  const button = ev.currentTarget
+  if (button.innerText === "Copy") {
+    button.innerText = "Copied!"
+    button.classList.add("success")
+    navigator.clipboard.writeText(resultInput.value)
+  } else {
+    button.innerText = "Copy"
+    button.classList.remove("success")
+  }
+})
+
+document.getElementById("themeSwitcher").addEventListener("click", function () {
+  if (main.dataset.theme === "dark") {
+    root.style.setProperty("--bg-color", "#f1f5f9")
+    root.style.setProperty("--border-color", "#aaa")
+    root.style.setProperty("--font-color", "#212529")
+    root.style.setProperty("--primary-color", "#26834a")
+    main.dataset.theme = "light"
+  } else {
+    root.style.setProperty("--bg-color", "#212529")
+    root.style.setProperty("--border-color", "#666")
+    root.style.setProperty("--font-color", "#f1f5f9")
+    root.style.setProperty("--primary-color", "#4dff91")
+    main.dataset.theme = "dark"
+  }
+})
